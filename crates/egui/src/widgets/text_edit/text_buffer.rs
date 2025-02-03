@@ -183,6 +183,9 @@ pub trait TextBuffer {
             self.delete_selected(&CursorRange::two(min, max))
         }
     }
+
+    /// Returns a unique identifier for the implementing type.
+    fn type_id(&self) -> std::any::TypeId;
 }
 
 impl TextBuffer for String {
@@ -226,6 +229,10 @@ impl TextBuffer for String {
     fn take(&mut self) -> String {
         std::mem::take(self)
     }
+
+    fn type_id(&self) -> std::any::TypeId {
+        std::any::TypeId::of::<Self>()
+    }
 }
 
 impl TextBuffer for Cow<'_, str> {
@@ -256,6 +263,10 @@ impl TextBuffer for Cow<'_, str> {
     fn take(&mut self) -> String {
         std::mem::take(self).into_owned()
     }
+
+    fn type_id(&self) -> std::any::TypeId {
+        std::any::TypeId::of::<Cow<'_, str>>()
+    }
 }
 
 /// Immutable view of a `&str`!
@@ -273,4 +284,8 @@ impl TextBuffer for &str {
     }
 
     fn delete_char_range(&mut self, _ch_range: Range<usize>) {}
+
+    fn type_id(&self) -> std::any::TypeId {
+        std::any::TypeId::of::<&str>()
+    }
 }
