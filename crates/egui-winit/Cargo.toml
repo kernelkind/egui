@@ -76,6 +76,8 @@ document-features = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
 webbrowser = { workspace = true, optional = true }
 
+arboard = { workspace = true, optional = true, features = ["image-data"] }
+
 [target.'cfg(target_os = "ios")'.dependencies]
 objc2.workspace = true
 objc2-foundation = { workspace = true, features = ["std", "NSThread"] }
@@ -98,6 +100,3 @@ smithay-clipboard = { workspace = true, optional = true }
 # and thus doesn't compile as it is used in egui-winit. This is fixed upstream, so force
 # a slightly newer version. Remove this when winit upgrades past this version.
 wayland-cursor = { workspace = true, optional = true }
-
-[target.'cfg(not(target_os = "android"))'.dependencies]
-arboard = { workspace = true, optional = true, features = ["image-data"] }
