@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
-use emath::{Rect, TSTransform};
+use emath::{NumExt as _, Rect, TSTransform};
 use epaint::{
     StrokeKind,
     text::{Galley, LayoutJob, cursor::CCursor},
 };
 
 use crate::{
-    Align, Align2, Color32, Context, CursorIcon, Event, EventFilter, FontSelection, Id, ImeEvent,
-    Key, KeyboardShortcut, Margin, Modifiers, NumExt as _, Response, Sense, Shape, TextBuffer,
+    Align, Align2, Color32, Context, CursorIcon, Event, EventFilter, FontSelection, IMEPurpose, Id,
+    ImeEvent, Key, KeyboardShortcut, Margin, Modifiers, Response, Sense, Shape, TextBuffer,
     TextStyle, TextWrapMode, Ui, Vec2, Widget, WidgetInfo, WidgetText, WidgetWithState, epaint,
     os::OperatingSystem,
     output::OutputEvent,
@@ -807,13 +807,49 @@ impl TextEdit<'_> {
                                 state.cursor.range(&galley),
                                 text.as_str().to_owned(),
                             );
-                            state.ime_enabled = true
+                            state.ime_enabled = true;
                         }
 
                         let now = ui.ctx().input(|i| i.time);
                         if response.changed() || selection_changed {
                             state.last_interaction_time = now;
                         }
+
+                        // Only show (and blink) cursor if the egui viewport has focus.
+                        // This is for two reasons:
+                        // * Don't give the impression that the user can type into a window without focus
+                        // * Don't repaint the ui because of a blinking cursor in an app that is not in focus
+                        let viewport_has_focus = ui.ctx().input(|i| i.focused);
+                        if viewport_has_focus {
+                            text_selection::visuals::paint_text_cursor(
+                                ui,
+                                &painter,
+                                primary_cursor_rect,
+                                now - state.last_interaction_time,
+                            );
+                        }
+
+                        // Set IME output (in screen coords) when text is editable and visible
+                        let to_global = ui
+                            .ctx()
+                            .layer_transform_to_global(ui.layer_id())
+                            .unwrap_or_default();
+
+                        ui.ctx().output_mut(|o| {
+                            let purpose = if self.multiline {
+                                IMEPurpose::Multiline
+                            } else if self.password {
+                                IMEPurpose::Password
+                            } else {
+                                IMEPurpose::Normal
+                            };
+
+                            o.ime = Some(crate::output::IMEOutput {
+                                purpose,
+                                rect: to_global * rect,
+                                cursor_rect: to_global * primary_cursor_rect,
+                            });
+                        });
                     }
 
                     // Set IME output (in screen coords) when text is editable and visible
@@ -823,9 +859,17 @@ impl TextEdit<'_> {
                         .unwrap_or_default();
 
                     ui.ctx().output_mut(|o| {
+                        let purpose = if self.multiline {
+                            IMEPurpose::Multiline
+                        } else if self.password {
+                            IMEPurpose::Password
+                        } else {
+                            IMEPurpose::Normal
+                        };
                         o.ime = Some(crate::output::IMEOutput {
                             rect: to_global * rect,
                             cursor_rect: to_global * primary_cursor_rect,
+                            purpose,
                         });
                     });
                 }
@@ -948,7 +992,7 @@ fn update_text_input(ctx: &Context, cursor_range: Option<CCursorRange>, text: St
             compose_region,
         };
 
-        o.text_input_state = Some(output)
+        o.text_input_state = Some(output);
     });
 }
 
@@ -1174,7 +1218,7 @@ fn events(
             Event::TextInputState(state) => {
                 log::debug!("replacing text edit via TextInputState {state:?}");
 
-                if &state.text != text.as_str() {
+                if state.text != text.as_str() {
                     text.replace_with(&state.text);
 
                     if state.selection.start == state.selection.end {
