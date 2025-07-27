@@ -1223,7 +1223,7 @@ fn events(
                 log::debug!("replacing text edit via TextInputState {state:?}");
 
                 if state.text != text.as_str() {
-                    text.replace_with(&state.text);
+                    apply_diff(text, &state.text);
 
                     if state.selection.start == state.selection.end {
                         Some(CCursorRange::one(CCursor::new(state.selection.start)))
@@ -1261,6 +1261,31 @@ fn events(
     );
 
     (any_change, cursor_range)
+}
+
+fn apply_diff(text: &mut dyn TextBuffer, after: &str) {
+    let before = text.as_str().to_owned();
+
+    let diff = similar::TextDiff::from_chars(before.as_str(), after);
+
+    let mut cursor = 0;
+
+    for change in diff.iter_all_changes() {
+        let change_len_chars = change.value().chars().count();
+
+        match change.tag() {
+            similar::ChangeTag::Delete => {
+                text.delete_char_range(cursor..cursor + change_len_chars);
+            }
+            similar::ChangeTag::Insert => {
+                text.insert_text(change.value(), cursor);
+                cursor += change_len_chars;
+            }
+            similar::ChangeTag::Equal => {
+                cursor += change_len_chars;
+            }
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
