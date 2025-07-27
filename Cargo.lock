@@ -1312,6 +1312,7 @@ dependencies = [
  "profiling",
  "ron",
  "serde",
+ "similar",
  "smallvec",
  "unicode-segmentation",
 ]
