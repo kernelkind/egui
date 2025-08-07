@@ -558,6 +558,10 @@ pub enum Event {
 
         image: std::sync::Arc<ColorImage>,
     },
+
+    /// When something covering the window has changed. Android with game-activity backend only at
+    /// the moment.
+    InsetsChanged,
 }
 
 /// IME event.
