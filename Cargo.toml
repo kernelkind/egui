@@ -142,10 +142,10 @@ web-time = "1.1.0" # Timekeeping for native and web
 webbrowser = "1.0.5"
 wgpu = { version = "27.0.1", default-features = false, features = ["std"] }
 windows-sys = "0.61.2"
-winit = { git = "https://github.com/kernelkind/winit", rev = "d6fcd55733e4d5232f53e225e9441e89cf6a298a", default-features = false }
+winit = { git = "https://github.com/kernelkind/winit", rev = "6252b851a5910f912d5f81b613765d30e7050379", default-features = false }
 
 [patch.crates-io]
-winit = { git = "https://github.com/kernelkind/winit", rev = "d6fcd55733e4d5232f53e225e9441e89cf6a298a" }
+winit = { git = "https://github.com/kernelkind/winit", rev = "6252b851a5910f912d5f81b613765d30e7050379" }
 
 [workspace.lints.rust]
 unsafe_code = "deny"

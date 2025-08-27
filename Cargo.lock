@@ -153,7 +153,7 @@ dependencies = [
 [[package]]
 name = "android-activity"
 version = "0.6.0"
-source = "git+https://github.com/damus-io/android-activity?rev=092a83b747937a2890ac219617a4252c001842ea#092a83b747937a2890ac219617a4252c001842ea"
+source = "git+https://github.com/damus-io/android-activity?rev=4ee16f1585e4a75031dc10785163d4b920f95805#4ee16f1585e4a75031dc10785163d4b920f95805"
 dependencies = [
  "android-properties",
  "bitflags 2.9.4",
@@ -1243,7 +1243,7 @@ checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 [[package]]
 name = "dpi"
 version = "0.1.1"
-source = "git+https://github.com/kernelkind/winit?rev=d6fcd55733e4d5232f53e225e9441e89cf6a298a#d6fcd55733e4d5232f53e225e9441e89cf6a298a"
+source = "git+https://github.com/kernelkind/winit?rev=6252b851a5910f912d5f81b613765d30e7050379#6252b851a5910f912d5f81b613765d30e7050379"
 
 [[package]]
 name = "ecolor"
@@ -5640,7 +5640,7 @@ checksum = "271414315aff87387382ec3d271b52d7ae78726f5d44ac98b4f4030c91880486"
 [[package]]
 name = "winit"
 version = "0.30.12"
-source = "git+https://github.com/kernelkind/winit?rev=d6fcd55733e4d5232f53e225e9441e89cf6a298a#d6fcd55733e4d5232f53e225e9441e89cf6a298a"
+source = "git+https://github.com/kernelkind/winit?rev=6252b851a5910f912d5f81b613765d30e7050379#6252b851a5910f912d5f81b613765d30e7050379"
 dependencies = [
  "ahash",
  "android-activity",
