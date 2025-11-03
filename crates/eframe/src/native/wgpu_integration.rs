@@ -464,8 +464,10 @@ impl WinitApp for WgpuWinitApp<'_> {
         if let Some(running) = &mut self.running {
             Ok(running.on_window_event(window_id, &event))
         } else {
-            // running is removed to get ready for exiting
-            Ok(EventResult::Exit)
+            // // running is removed to get ready for exiting
+            // Ok(EventResult::Exit)
+
+            Ok(EventResult::Wait)
         }
     }
 
